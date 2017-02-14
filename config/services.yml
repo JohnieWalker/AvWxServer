@@ -1,0 +1,18 @@
+services:
+  symfony.console_output:
+    class: Symfony\Component\Console\Output\ConsoleOutput
+  symfony.console_logger:
+    class: Symfony\Component\Console\Logger\ConsoleLogger
+    arguments: ['@symfony.console_output']
+  dbal_configuration:
+    class: Doctrine\DBAL\Configuration
+  db_connection:
+    class: Doctrine\DBAL\DriverManager
+    factory: ['Doctrine\DBAL\DriverManager', getConnection]
+    arguments: [%db_config%, '@dbal_configuration']
+  weather_updater:
+    class: App\WeatherUpdater
+    arguments: ['@symfony.console_logger', '@db_connection']
+  update_weather_command:
+    class: App\UpdateWeatherCommand
+    arguments: [null, '@weather_updater']

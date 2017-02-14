@@ -1,0 +1,23 @@
+<?php
+
+require __DIR__."/vendor/autoload.php";
+
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+
+$container = new ContainerBuilder();
+$configDir = new FileLocator(__DIR__.'/config');
+
+$loader = new YamlFileLoader($container, $configDir);
+$loader->load('parameters.yml');
+$loader->load('services.yml');
+
+$command = $container->get('update_weather_command');
+$output = $container->get('symfony.console_output');
+
+$application = new Application('WeatherServer', '1.0.0');
+$application->add($command);
+
+$application->run(null, $output);
